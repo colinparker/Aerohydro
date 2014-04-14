@@ -101,27 +101,66 @@ def I(xci,yci,pj,dxdz,dydz):
     return integrate.quad(lambda s:func(s),0.,pj.length)[0]
     
 def sourceMatrix(p):
-    N=length(p)
+    N=len(p)
     A=np.empty((N,N),dtype=float)
     np.fill_diagonal(A,0.5)
     for i in range(N):
         for j in range(N):
             if(j!=i):
-                B[i]-=0.5/pi*I(p[i].xc,p[i].yc,p[j],+sin(p[i].beta),-cos(p[i].beta))
-    return B
+                A[i,j]-=0.5/pi*I(p[i].xc,p[i].yc,p[j],+cos(p[i].beta),+sin(p[i].beta))
+    return A
 
+def vortexArray(p):
+    N = len(p)
+    B = np.zeros(N,dtype=float)
+    for i in range(N):
+	for j in range(N):
+		if (j!=i):
+		  B[i] -= 0.5/pi*I(p[i].xc,p[i].yc,p[j],+sin(p[i].beta),-cos(p[i].beta))
+	return B
+	
 def kuttaArray(p):
     N=len(p)
     B=np.zeros(N+1,dtype=float)
     for j in range(N):
         if(j==0):
-            B[j]=0.5/pi*I(p[N-1].xc,p[N-1].yc,p[j],-sin(p[N-1].beta),+cos([N-1].beta))
+            B[j]=0.5/pi*I(p[N-1].xc,p[N-1].yc,p[j],-sin(p[N-1].beta),+cos(p[N-1].beta))
         elif(j==N-1):
-            B[j]=0.5/pi*I(p[0].xc,p[0].yc,p[j],-sin(p[0].beta)+cos(p[0].beta))
+            B[j]=0.5/pi*I(p[0].xc,p[0].yc,p[j],-sin(p[0].beta),+cos(p[0].beta))
         else:
             B[j]=0.5/pi*I(p[0].xc,p[0].yc,p[j],-sin(p[0].beta),+cos(p[0].beta))\
-                + 0.5/pi*I(p[N-1].xc,p[N-1].yc,p[j],-sin(p[N-1].beta),+cos(p[n-1].beta))
+                + 0.5/pi*I(p[N-1].xc,p[N-1].yc,p[j],-sin(p[N-1].beta),+cos(p[N-1].beta))
             B[N]-=0.5/pi*I(p[0].xc,p[0].yc,p[j],+cos(p[0].beta),+sin(p[0].beta))\
                 + 0.5/pi*I(p[N-1].xc,p[N-1].yc,p[j],+cos(p[N-1].beta),+sin(p[N-1].beta))
     return B
+    
+    
+def buildMatrix(panel):
+    N=len(panel)
+    A=np.empty((N+1,N+1),dtype=float)
+    AS=sourceMatrix(panel)
+    BV=vortexArray(panel)
+    BK=kuttaArray(panel)
+    A[0:N,0:N],A[0:N,N],A[N,:]=AS[:,:],BV[:],BK[:]
+    return A
+    
+    
+    
+def buildRHS(p,fs):
+    N=len(p)
+    B=np.zeros(N+1,dtype=float)
+    for i in range(N):
+        B[i]=-fs.Uinf*cos(fs.alpha-p[i].beta)
+    B[N]=-fs.Uinf*(sin(fs.alpha-p[0].beta)+sin(fs.alpha-p[N-1].beta))
+    return B
+    
+A=buildMatrix(panel)
+B=buildRHS(panel,freestream)
+   
+var=np.linalg.solve(A,B)
+for i in range(len(panel)):
+    panel[i].sigma=var[i]
+gamma=var[-1]
+
+
             
