@@ -163,20 +163,24 @@ for i in range(len(panel)):
 gamma=var[-1]
 
 def getTangentVelocity(p,fs,gamma):
-    N=len(p)
-    A=np.zeros((N,N+1),dtype=float)
+    N = len(p)
+    A = np.zeros((N,N+1),dtype=float)
     for i in range(N):
-        for j in range(N):
-            if(i!=j):
-                A[i,j]=0.5/pi*I(p[i].xc,p[i].yc,p[j],-sin(p[i].beta),+cos(p[i].beta))
-                A[i,N]-=0.5/pi*I(p[i].xc,p[i].yc,p[j],+cos(p[i].beta),+sin(p[i].beta))
-    B=fs.Uinf*np.sin([fs.alpha-pp.beta for pp in p])
-    var=np.empty(N+1,dtype=float)
-    var= np.append([pp.sigma for pp in p],gamma)
+	for j in range(N):
+		if (i!=j):
+			A[i,j] = 0.5/pi*I(p[i].xc,p[i].yc,p[j],-sin(p[i].beta),+cos(p[i].beta))
+			A[i,N] -= 0.5/pi*I(p[i].xc,p[i].yc,p[j],+cos(p[i].beta),+sin(p[i].beta))
+    B = fs.Uinf*np.sin([fs.alpha-pp.beta for pp in p])
+    var = np.empty(N+1,dtype=float)
+    var = np.append([pp.sigma for pp in p],gamma)
     vt = np.dot(A,var)+B
     for i in range(N):
-        p[i].vt=vt[i]
-    
+	p[i].vt = vt[i]
+	
 getTangentVelocity(panel,freestream,gamma)
 
-            
+def getPressureCoefficient(p,fs):
+	for i in range(len(p)):
+		p[i].Cp = 1-(p[i].vt/fs.Uinf)**2
+		
+getPressureCoefficient(panel,freestream)
