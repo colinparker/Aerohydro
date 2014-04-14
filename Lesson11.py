@@ -73,7 +73,7 @@ xStart,xEnd = xmin-valX*(xmax-xmin),xmax+valX*(xmax-xmin)
 yStart,yEnd = ymin-valY*(ymax-ymin),ymax+valY*(ymax-ymin)
 size = 10
 plt.figure(figsize=(size,(yEnd-yStart)/(xEnd-xStart)*size))
-p#lt.grid(True)
+#plt.grid(True)
 plt.xlabel('x',fontsize=16)
 plt.ylabel('y',fontsize=16)
 plt.xlim(xStart,xEnd)
@@ -83,3 +83,21 @@ plt.plot(np.append([p.xa for p in panel],panel[0].xa),\
         np.append([p.ya for p in panel],panel[0].ya),\
         linestyle='-',linewidth=1,\
         marker='o',markersize=6,color='#CD2305');
+
+class Freestream:
+    def __init__(self,Uinf,alpha):
+        self.Uinf=Uinf
+        self.alpha=alpha*pi/180
+Uinf=1.0
+alpha=1.0
+freestream=Freestream(Uinf,alpha)
+
+def I(xci,yci,pj,dxdz,dydz):
+    def func(s):
+        return (+(xci-(pj.xa-sin(pj.beta)*s))*dxdz\
+            +(yci-(pj.ya+cos(pj.beta)*s))*dydz)\
+            /((xci-(pj.xa-sin(pj.beta)*s))**2\
+            +(yci-(pj.ya+cos(pj.beta)*s))**2)
+    return integrate.quad(lambda s:func(s),0.,pj.length)[0]
+    
+
