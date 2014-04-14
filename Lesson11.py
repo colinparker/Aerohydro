@@ -100,4 +100,13 @@ def I(xci,yci,pj,dxdz,dydz):
             +(yci-(pj.ya+cos(pj.beta)*s))**2)
     return integrate.quad(lambda s:func(s),0.,pj.length)[0]
     
-
+def sourceMatrix(p):
+    N=length(p)
+    A=np.empty((N,N),dtype=float)
+    np.fill_diagonal(A,0.5)
+    for i in range(N):
+        for j in range(N):
+            if(j!=i):
+                B[i]-=0.5/pi*I(p[i].xc,p[i].yc,p[j],+sin(p[i].beta),-cos(p[i].beta))
+    return B
+    
