@@ -2,7 +2,6 @@ import numpy as np
 from scipy import integrate
 from math import *
 import matplotlib.pyplot as plt
-
 coords = np.loadtxt(fname='../Aerohydro/resources/naca0012.dat')
 xp,yp=coords[:,0],coords[:,1]
 
@@ -184,3 +183,9 @@ def getPressureCoefficient(p,fs):
 		p[i].Cp = 1-(p[i].vt/fs.Uinf)**2
 		
 getPressureCoefficient(panel,freestream)
+
+
+print '--> sum of source/sink strengths:',sum([p.sigma*p.length for p in panel])
+
+Cl = gamma*sum([p.length for p in panel])/(0.5*freestream.Uinf*(xmax-xmin))
+print '--> Lift coefficient: Cl =',Cl
