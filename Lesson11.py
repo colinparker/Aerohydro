@@ -66,7 +66,7 @@ def definePanels(N,xp,yp):
     
     return panel
     
-N = 20                   
+N = 40                   
 panel = definePanels(N,xp,yp) 
 
 valX,valY = 0.1,0.2
@@ -94,7 +94,7 @@ class Freestream:
 		
 
 Uinf = 1.0                        
-alpha = 1.0                              
+alpha = 4.0                              
 freestream = Freestream(Uinf,alpha)  
 
 
@@ -220,12 +220,14 @@ def getVelocityField(panel,freestream,gamma,X,Y):
     for i in range(Nx):
         for j in range(Ny):
             u[i,j] = freestream.Uinf*cos(freestream.alpha)\
-				+ 0.5/pi*sum([p.sigma*I(X[i,j],Y[i,j],p,1,0) for p in panel])
+				+ 0.5/pi*sum([p.sigma*I(X[i,j],Y[i,j],p,1,0) for p in panel])\
+				-0.5/pi*gamma*sum([I(X[i,j],Y[i,j],p,0,-1) for p in panel])
             v[i,j] = freestream.Uinf*sin(freestream.alpha)\
-				+ 0.5/pi*sum([p.sigma*I(X[i,j],Y[i,j],p,0,1) for p in panel])
+				+ 0.5/pi*sum([p.sigma*I(X[i,j],Y[i,j],p,0,1) for p in panel])\
+				-0.5/pi*gamma*sum([I(X[i,j],Y[i,j],p,1,0) for p in panel])
     return u,v
     
-Nx,Ny = 20,20
+Nx,Ny = 50,50
 valX,valY = 1.0,2.0
 
 xmin,xmax = min([p.xa for p in panel]),max([p.xa for p in panel])
