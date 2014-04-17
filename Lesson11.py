@@ -249,3 +249,18 @@ plt.fill([p.xa for p in panel],[p.ya for p in panel],'ko-',linewidth=2,zorder=2)
 plt.xlim(xStart,xEnd)
 plt.ylim(yStart,yEnd)
 plt.title('Streamlines around a NACA 0012 airfoil, '+r'$\alpha=$'+str(alpha));
+
+Cp = 1.0-(u**2+v**2)/freestream.Uinf**2
+
+size=12
+plt.figure(figsize=(1.1*size,(yEnd-yStart)/(xEnd-xStart)*size))
+plt.xlabel('x',fontsize=16)
+plt.ylabel('y',fontsize=16)
+contf = plt.contourf(X,Y,Cp,levels=np.linspace(-2.0,1.0,100),extend='both')
+cbar = plt.colorbar(contf)
+cbar.set_label('$C_p$',fontsize=16)
+cbar.set_ticks([-2.0,-1.0,0.0,1.0])
+plt.fill([p.xc for p in panel],[p.yc for p in panel],'ko-',linewidth=2,zorder=2)
+plt.xlim(xStart,xEnd)
+plt.ylim(yStart,yEnd)
+plt.title('Contour of pressure field');
