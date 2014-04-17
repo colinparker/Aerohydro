@@ -3,8 +3,20 @@ from scipy import integrate
 from math import *
 import matplotlib.pyplot as plt
 
-coords = np.loadtxt(fname='../Aerohydro/resources/naca0012.dat')
-xp,yp = coords[:,0],coords[:,1]
+# function to read the coordinates to store into two 1D arrays
+def readGeometry():
+    inFile = open('C:/Users/Colin/Documents/GitHub/Aerohydro/resources/naca0012.dat','r')
+
+    x,y = [],[]
+    for line in inFile:
+        data = line.split()
+        x.append(float(data[0]))
+        y.append(float(data[1]))
+    x,y = np.array(x),np.array(y)
+    inFile.close()
+    return x,y
+    
+xp,yp = readGeometry()         # read of the geometry from a data file
 
 # plotting the geometry
 valX,valY = 0.1,0.2

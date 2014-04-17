@@ -5,7 +5,7 @@ from scipy import integrate
 from math import *
 
 # read of the geometry from a data file
-coords = np.loadtxt(fname='../Aerohydro/resources/naca0012.dat')
+coords = np.loadtxt(fname='C:/Users/Colin/Documents/GitHub/Aerohydro/resources/naca0012.dat')
 xp,yp = coords[:,0],coords[:,1]
 
 # plotting the geometry
