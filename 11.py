@@ -213,6 +213,7 @@ print '--> sum of source/sink strengths:',sum([p.sigma*p.length for p in panel])
 Cl = gamma*sum([p.length for p in panel])/(0.5*freestream.Uinf*(xmax-xmin))
 print '--> Lift coefficient: Cl =',Cl
 
+#Challenge Task
 
 def getVelocityField(panel,freestream,gamma,X,Y):
     Nx,Ny = X.shape
